@@ -7,6 +7,17 @@ CardsModal cardsModalFromJson(String str) => CardsModal.fromJson(json.decode(str
 
 String cardsModalToJson(CardsModal data) => json.encode(data.toJson());
 
+class GpsDataModel{
+  String speed;
+  double lat;
+  double lng;
+  String imei;
+  String deviceName;
+  String powerValue;
+  GpsDataModel({this.speed, this.imei, this.lat, this.deviceName, this.lng, this.powerValue});
+}
+
+
 class CardsModal {
   CardsModal({
     this.id,

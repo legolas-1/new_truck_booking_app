@@ -1,19 +1,16 @@
+import 'package:Liveasy/screens/choice_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:location_permissions/location_permissions.dart';
-import 'package:Liveasy/screens/shipper_new_entry.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'cardGenerator.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:Liveasy/widgets/backend_connection.dart';
 import 'package:Liveasy/widgets/cardProperties.dart';
-import 'package:Liveasy/widgets/LoadingPointSeachScreen.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:Liveasy/screens/cardGenerator.dart';
 import 'package:provider/provider.dart';
 import 'package:Liveasy/widgets/weight_modal_screen.dart';
 import 'package:Liveasy/widgets/noOfTrucks_modal_screen.dart';
@@ -21,56 +18,34 @@ import 'package:Liveasy/widgets/providerData.dart';
 import 'package:Liveasy/widgets/dropDownGenerator.dart';
 import 'package:Liveasy/widgets/product_type_modal_screen.dart';
 import 'package:Liveasy/widgets/truck_type_modal_screen.dart';
+import 'package:Liveasy/widgets/functionsAndModels.dart';
 String mapKey = "AIzaSyCTVVijIWofDrI6LpSzhUqJIF90X-iyZmE";
 
 var controller1 = TextEditingController();
 var controller2 = TextEditingController();
 var controller3 = TextEditingController();
 
+// ignore: must_be_immutable
 class ShipperHomeScreen extends StatefulWidget {
   User user;
   String userCity ='';
   ShipperHomeScreen({this.user, this.userCity});
-
   @override
   _ShipperHomeScreenState createState() => _ShipperHomeScreenState();
 }
 
 class _ShipperHomeScreenState extends State<ShipperHomeScreen> {
-  var jsonData;
-  var LocationCards1;
-  var LocationCards2;
+  var locationCard1;
+  var locationCard2;
+  String city = '';
   DateTime date = DateTime.now();
-  Future<List<LoactionCardsModal>> fillCityName(String cityName) async {
-    if (cityName.length > 1) {
-      http.Response tokenGet = await http.post('https://outpost.mapmyindia.com/api/security/oauth/token?grant_type=client_credentials&client_id=33OkryzDZsJmp0siGnK04TeuQrg3DWRxswnTg_VBiHew-2D1tA3oa3fthrGnx4vwbwlbF_xT2T4P9dykuS1GUNmbRb8e5CUgz-RgWDyQspeDCXkXK5Nagw==&client_secret=lrFxI-iSEg9xHXNZXiqUoprc9ZvWP_PDWBDw94qhrze0sUkn7LBDwRNFscpDTVFH7aQT4tu6ycN0492wqPs-ewpjObJ6xuR7iRufmSVcnt9fys5dp0F5jlHLxBEj7oqq');
-      var body = jsonDecode(tokenGet.body);
-      var token = body["access_token"];
-      http.Response response1 = await http.get('https://atlas.mapmyindia.com/api/places/search/json?query=$cityName&pod=CITY',
-        headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},);
-      print(response1.statusCode);
-      var adress = (jsonDecode(response1.body));
-      adress = adress["suggestedLocations"];
-      List<LoactionCardsModal> card = [];
-      for ( var json in adress) {
-        LoactionCardsModal loactionCardsModal = new LoactionCardsModal();
-        loactionCardsModal.placeName = json["placeName"];
-        loactionCardsModal.placeAddress = json["placeAddress"];
-        card.add(loactionCardsModal);
-      }
-      card = card..sort((a,b) => a.placeName.toString().compareTo(b.placeName.toString()));
-      return card;
-    }
-  }
+  int currentPage = 0;
+  PageController _controller = PageController(initialPage: 0,);
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+
   Future<CardsModal> createCardOnApi() async {
-    print(Provider.of<NewDataByShipper>(context, listen: false).loadingPoint);
-    print(Provider.of<NewDataByShipper>(context, listen: false).unloadingPoint);
-    print(Provider.of<NewDataByShipper>(context, listen: false).productType);
-    print( Provider.of<NewDataByShipper>(context, listen: false).truckPreference);
-    print(Provider.of<NewDataByShipper>(context, listen: false).noOfTrucks);
-    print(Provider.of<NewDataByShipper>(context, listen: false).weight);
-    print(Provider.of<NewDataByShipper>(context, listen: false).isCommentsEmpty );
-    print( Provider.of<NewDataByShipper>(context, listen: false).comments);
     Map data = {
       "loadingPoint": Provider.of<NewDataByShipper>(context, listen: false).loadingPoint,
       "unloadingPoint": Provider.of<NewDataByShipper>(context, listen: false).unloadingPoint,
@@ -91,6 +66,9 @@ class _ShipperHomeScreenState extends State<ShipperHomeScreen> {
     ProductTypeWidgetScreen().clear_all();
     TruckTypeWidgetScreen().clear_all();
     WeightWidgetScreen().clear_all();
+    controller1.clear();
+    controller2.clear();
+    controller3.clear();
     print(response.statusCode);
     if (response.statusCode == 200) {
       final String responseString = response.body;
@@ -99,7 +77,6 @@ class _ShipperHomeScreenState extends State<ShipperHomeScreen> {
       return null;
     }
   }
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   void getDate(BuildContext context) async {
     DateTime pickedDate = await showDatePicker(
@@ -112,6 +89,7 @@ class _ShipperHomeScreenState extends State<ShipperHomeScreen> {
   }
 
   Future<List<CardsModal>> getCardsData() async {
+    var jsonData;
     http.Response response = await http.get("http://ec2-52-53-40-46.us-west-1.compute.amazonaws.com:8080/load");
     jsonData = await jsonDecode(response.body);
     print(jsonData);
@@ -131,16 +109,14 @@ class _ShipperHomeScreenState extends State<ShipperHomeScreen> {
     return card;
   }
 
-  String city = '';
   void getCurrentLocation() async {
 
     if (city == ''){
-    // PermissionStatus permission =
-    //     await LocationPermissions().requestPermissions();
     PermissionStatus permission1 =
         await LocationPermissions().checkPermissionStatus();
-    print(permission1);
-    // print(permission);
+    if (permission1 != PermissionStatus.granted){
+      permission1 = await LocationPermissions().requestPermissions();
+    }
 
     var position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     print(position.latitude);
@@ -173,14 +149,11 @@ class _ShipperHomeScreenState extends State<ShipperHomeScreen> {
     Provider.of<NewDataByShipper>(context,listen: false).updateLoadingPoint(newValue: city);}
   }
 
-  PageController _controller = PageController(initialPage: 0,);
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
     getCurrentLocation();
   }
-  int currentPage = 0;
   @override
   Widget build(BuildContext context) {
     if (Provider.of<NewDataByShipper>(context).loadingPoint != null){
@@ -222,8 +195,9 @@ class _ShipperHomeScreenState extends State<ShipperHomeScreen> {
                   GestureDetector(
                     onTap: () {
                       FirebaseAuth.instance.signOut();
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/', (route) => false);
+
+                      Navigator.pushAndRemoveUntil(
+                          context,  MaterialPageRoute(builder: (context) => ChoiceScreen()), (route) => false);
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 15),
@@ -362,12 +336,16 @@ class _ShipperHomeScreenState extends State<ShipperHomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
-                                '           Welcome To \n The Truck Booking App',
-                                style: TextStyle(
-                                    fontSize: 30,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500),
+                              GestureDetector(
+                                onTap: (){
+                                },
+                                child: Text(
+                                  '           Welcome To \n The Truck Booking App',
+                                  style: TextStyle(
+                                      fontSize: 30,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500),
+                                ),
                               ),
                             ],
                           ),
@@ -404,11 +382,11 @@ class _ShipperHomeScreenState extends State<ShipperHomeScreen> {
                                                 onChanged: (newValue) {
                                                   if(newValue.length > 2){print(newValue);
                                                   setState(() {
-                                                    LocationCards1 = fillCityName(newValue);
+                                                    locationCard1 = fillCityName(newValue);
                                                   });}
                                                   else{
                                                     setState(() {
-                                                      LocationCards1 = null;
+                                                      locationCard1 = null;
                                                     });
                                                   }
                                                 },
@@ -431,18 +409,18 @@ class _ShipperHomeScreenState extends State<ShipperHomeScreen> {
                                             Container(
                                               child: GestureDetector(onTap:(){setState(() {
                                                 Provider.of<NewDataByShipper>(context,listen: false).updateLoadingPoint(newValue: null);
-                                                LocationCards1 = null;
+                                                locationCard1 = null;
                                                 controller1 = TextEditingController(text: null);
                                               });} ,child: Icon(Icons.clear,size: 25, color: Colors.black26,)),
                                             )
                                           ],
                                         ),
                                       ),
-                                      LocationCards1 == null ? Container(): SizedBox(height: 20,),
-                                      LocationCards1 != null ? Container(
+                                      locationCard1 == null ? Container(): SizedBox(height: 20,),
+                                      locationCard1 != null ? Container(
                                         height: 150,
                                         child: FutureBuilder(
-                                            future: LocationCards1,
+                                            future: locationCard1,
                                             builder: (BuildContext context,  AsyncSnapshot snapshot ){
                                               if (snapshot.data == null) {
                                                 return Container(
@@ -480,11 +458,11 @@ class _ShipperHomeScreenState extends State<ShipperHomeScreen> {
                                                 onChanged: (newValue) {
                                                   if(newValue.length > 2){print(newValue);
                                                   setState(() {
-                                                    LocationCards2 = fillCityName(newValue);
+                                                    locationCard2 = fillCityName(newValue);
                                                   });}
                                                   else{
                                                     setState(() {
-                                                      LocationCards2 = null;
+                                                      locationCard2 = null;
                                                     });
                                                   }
                                                 },
@@ -507,18 +485,18 @@ class _ShipperHomeScreenState extends State<ShipperHomeScreen> {
                                             Container(
                                               child: GestureDetector(onTap:(){setState(() {
                                                 Provider.of<NewDataByShipper>(context,listen: false).updateUnloadingPoint(newValue: null);
-                                                LocationCards2 = null;
+                                                locationCard2 = null;
                                                 controller2= TextEditingController(text: null);
                                               });} ,child: Icon(Icons.clear, size: 25, color: Colors.black26,)),
                                             )
                                           ],
                                         ),
                                       ),
-                                      LocationCards2 == null ? Container(): SizedBox(height: 20,),
-                                      LocationCards2 != null ? Container(
+                                      locationCard2 == null ? Container(): SizedBox(height: 20,),
+                                      locationCard2 != null ? Container(
                                         height: 150,
                                         child: FutureBuilder(
-                                            future: LocationCards2,
+                                            future: locationCard2,
                                             builder: (BuildContext context,  AsyncSnapshot snapshot ){
                                               if (snapshot.data == null) {
                                                 return Container(
@@ -797,10 +775,10 @@ class _ShipperHomeScreenState extends State<ShipperHomeScreen> {
       onTap: (){
         setState(() {
           if (CardType == 'loading'){
-            LocationCards1 = null;
+            locationCard1 = null;
             Provider.of<NewDataByShipper>(context,listen: false).updateLoadingPoint(newValue: '$placeName ($placeAddress)');}
           else if (CardType =='unloading'){
-            LocationCards2 = null;
+            locationCard2 = null;
             Provider.of<NewDataByShipper>(context,listen: false).updateUnloadingPoint(newValue: '$placeName ($placeAddress)');}
         });
       },

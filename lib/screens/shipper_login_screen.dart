@@ -1,14 +1,41 @@
+import 'package:Liveasy/screens/choice_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:Liveasy/widgets/providerData.dart';
 import 'shipper_home_Screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 class ShipperLoginScreen extends StatefulWidget {
   @override
   _ShipperLoginScreenState createState() => _ShipperLoginScreenState();
 }
+
+Future<String> sendUserDetails({String userId, String mobileNum,String userType}) async {
+
+  Map data = {
+    "userID": userId,
+    "mobileNum": mobileNum,
+    "userType": userType
+    };
+  String body = json.encode(data);
+  final String apiUrl = "http://15.206.217.236:2000/users";
+  final response = await http.post(apiUrl,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: body);
+  print(response.statusCode);
+  if (response.statusCode == 200) {
+    final String responseString = response.body;
+    return responseString;
+  } else {
+    return null;
+  }
+}
+
 
 class _ShipperLoginScreenState extends State<ShipperLoginScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -35,8 +62,7 @@ class _ShipperLoginScreenState extends State<ShipperLoginScreen> {
             showProgressHud = false;
           });
           Navigator.pop(context);
-          if(!Provider.of<NewDataByShipper>(context,listen: false).listOfShippers.contains(user.phoneNumber)){
-          Provider.of<NewDataByShipper>(context,listen: false).addShipper(newValue: user.phoneNumber);}
+          sendUserDetails(userId: user.uid, mobileNum: user.phoneNumber, userType: "shipper");
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
@@ -47,10 +73,10 @@ class _ShipperLoginScreenState extends State<ShipperLoginScreen> {
           setState(() {
             showProgressHud = false;
           });
-          Navigator.pushNamed(context, '/');
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ChoiceScreen()));
         }
 
-        //This callback would gets called when verification is done auto maticlly
+        //This callback would gets called when verification is done automatically
       },
       verificationFailed: (FirebaseAuthException exception) {
         Navigator.pushNamed(context, '/');
@@ -99,7 +125,7 @@ class _ShipperLoginScreenState extends State<ShipperLoginScreen> {
                         user = result.user;
                         print(user);
                       } catch (e) {
-                        Navigator.pushNamed(context, '/');
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ChoiceScreen()));
                         throw e;
                       }
 
@@ -107,8 +133,7 @@ class _ShipperLoginScreenState extends State<ShipperLoginScreen> {
                         setState(() {
                           showProgressHud = false;
                         });
-                      if(!Provider.of<NewDataByShipper>(context,listen: false).listOfShippers.contains(user.phoneNumber)){
-                        Provider.of<NewDataByShipper>(context,listen: false).addShipper(newValue: user.phoneNumber);}
+                        sendUserDetails(userId: user.uid, mobileNum: user.phoneNumber, userType: "shipper");
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -116,7 +141,7 @@ class _ShipperLoginScreenState extends State<ShipperLoginScreen> {
                                       user: user,
                                     )));
                       } else {
-                        Navigator.pushNamed(context, '/');
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ChoiceScreen()));
                       }
                     },
                   )

@@ -142,7 +142,7 @@ class _WeightWidgetScreenState extends State<WeightWidgetScreen> {
       color_9 = color_Unselected;
       color_10 = color_Unselected;
       Provider.of<NewDataByShipper>(context, listen: false)
-          .updateWeight(newValue: 'More than 35 tons');
+          .updateWeight(newValue: '40 tons');
     }
     // else if (cardNumber == 9 && color_9 == color_Unselected) {
     //   color_9 = color_Selected;
