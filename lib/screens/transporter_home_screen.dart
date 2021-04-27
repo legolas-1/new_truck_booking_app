@@ -1,11 +1,16 @@
+import 'package:Liveasy/screens/choice_screen.dart';
+import 'package:Liveasy/screens/transporter_showMapUsingImei.dart';
+import 'package:Liveasy/widgets/truckDetailsCardGenerator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:geocoder/geocoder.dart';
-import 'package:location_permissions/location_permissions.dart';
 import 'package:Liveasy/screens/transporter_find_load.dart';
 import 'package:Liveasy/screens/transporter_found_loads.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:Liveasy/widgets/backend_connection.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 var controller1 = TextEditingController();
 var controller2 = TextEditingController();
 String loadingPoint = '';
@@ -28,18 +33,18 @@ class _TsHomeScreenState extends State<TsHomeScreen> {
 
       // PermissionStatus permission =
       //     await LocationPermissions().requestPermissions();
-      PermissionStatus permission1 =
-      await LocationPermissions().checkPermissionStatus();
-      print(permission1);
-      // print(permission);
-
-      var position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      print(position);
-      final coordinates = new Coordinates(position.latitude, position.longitude);
-      var addresses =
-      await Geocoder.local.findAddressesFromCoordinates(coordinates);
-      var first = addresses.first;
-      print(first.addressLine);
+      // PermissionStatus permission1 =
+      // await LocationPermissions().checkPermissionStatus();
+      // print(permission1);
+      // // print(permission);
+      //
+      // var position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      // print(position);
+      // final coordinates = new Coordinates(position.latitude, position.longitude);
+      // var addresses =
+      // await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      // var first = addresses.first;
+      // print(first.addressLine);
       // http.Response tokenGet = await http.post('https://outpost.mapmyindia.com/api/security/oauth/token?grant_type=client_credentials&client_id=33OkryzDZsJmp0siGnK04TeuQrg3DWRxswnTg_VBiHew-2D1tA3oa3fthrGnx4vwbwlbF_xT2T4P9dykuS1GUNmbRb8e5CUgz-RgWDyQspeDCXkXK5Nagw==&client_secret=lrFxI-iSEg9xHXNZXiqUoprc9ZvWP_PDWBDw94qhrze0sUkn7LBDwRNFscpDTVFH7aQT4tu6ycN0492wqPs-ewpjObJ6xuR7iRufmSVcnt9fys5dp0F5jlHLxBEj7oqq');
       // print(tokenGet.statusCode);
       // print(tokenGet.body);
@@ -110,8 +115,9 @@ class _TsHomeScreenState extends State<TsHomeScreen> {
                   GestureDetector(
                     onTap: () {
                       FirebaseAuth.instance.signOut();
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/', (route) => false);
+
+                      Navigator.pushAndRemoveUntil(
+                          context,  MaterialPageRoute(builder: (context) => ChoiceScreen()), (route) => false);
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 15),
@@ -381,6 +387,23 @@ class _TsHomeScreenState extends State<TsHomeScreen> {
                         ),
                       ),
                     ),
+                    Scaffold(
+                      body: Center(
+                        child: ListView(
+                          children: [
+                            GestureDetector(
+                                onTap: ()async{
+                                  GpsDataModel gpsData = await getLocationByImei(imei: "355172100788965");
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) =>ShowMapWithImei(gpsData: gpsData,)));
+                                  //sendUserDetails(userId: widget.user.uid, mobileNum: widget.user.phoneNumber, userType: "shipper");
+                                },
+                                child: TruckDetailsCard(imei : "355172100788965", mobileNum: widget.user.phoneNumber)),
+                            SizedBox(height: 10,),
+                            TruckDetailsCard(imei: "IMEI num", mobileNum: widget.user.phoneNumber,)
+                          ],
+                        ),
+                      )
+                    ),
                   ],
                 ),
               ),
@@ -390,4 +413,43 @@ class _TsHomeScreenState extends State<TsHomeScreen> {
       ),
     );
   }
+}
+
+Future<GpsDataModel> getLocationByImei({String imei}) async {
+  var jsonData;
+  http.Response response = await http.get("http://65.2.59.24:3000/locationbyimei/$imei");
+  jsonData = await jsonDecode(response.body);
+  print(response.statusCode);
+  print(jsonData);
+  GpsDataModel gpsDataModel = new GpsDataModel();
+  gpsDataModel.imei = jsonData["imei"];
+  gpsDataModel.lat = double.parse(jsonData["lat"]);
+  gpsDataModel.lng = double.parse(jsonData["lng"]);
+  gpsDataModel.speed = jsonData["speed"];
+  gpsDataModel.deviceName = jsonData["deviceName"];
+  gpsDataModel.powerValue = jsonData["powerValue"];
+  return gpsDataModel;
+}
+
+void getCardsData() async {
+  var jsonData;
+  http.Response response = await http.get("http://localhost:8080/locationbyimei/355172100788965");
+  print(response.statusCode);
+
+  jsonData = await jsonDecode(response.body);
+
+  print(jsonData);
+  // List<CardsModal> card = [];
+  // for (var json in jsonData) {
+  //   CardsModal cardsModal = new CardsModal();
+  //   cardsModal.loadingPoint = json["loadingPoint"];
+  //   cardsModal.unloadingPoint = json["unloadingPoint"];
+  //   cardsModal.productType = json["productType"];
+  //   cardsModal.truckType = json["truckType"];
+  //   cardsModal.noOfTrucks = json["noOfTrucks"];
+  //   cardsModal.weight = json["weight"];
+  //   cardsModal.comment = json["comment"];
+  //   cardsModal.status = json["status"];
+  //   card.add(cardsModal);
+  // }
 }

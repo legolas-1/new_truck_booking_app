@@ -1,3 +1,5 @@
+import 'package:Liveasy/screens/choice_screen.dart';
+import 'package:Liveasy/screens/shipper_login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -32,6 +34,7 @@ class _TransporterLoginScreenState extends State<TransporterLoginScreen> {
             showProgressHud = false;
           });
           Navigator.pop(context);
+          sendUserDetails(userId: user.uid, mobileNum: user.phoneNumber, userType: "transporter");
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
@@ -42,13 +45,13 @@ class _TransporterLoginScreenState extends State<TransporterLoginScreen> {
           setState(() {
             showProgressHud = false;
           });
-          Navigator.pushNamed(context, '/');
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ChoiceScreen()));
         }
 
         //This callback would gets called when verification is done auto maticlly
       },
       verificationFailed: (FirebaseAuthException exception) {
-        Navigator.pushNamed(context, '/');
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ChoiceScreen()));
         setState(() {
           showProgressHud = false;
         });
@@ -94,7 +97,7 @@ class _TransporterLoginScreenState extends State<TransporterLoginScreen> {
                       user = result.user;
                       print(user);
                     } catch (e) {
-                      Navigator.pushNamed(context, '/');
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChoiceScreen()));
                       throw e;
                     }
 
@@ -109,7 +112,7 @@ class _TransporterLoginScreenState extends State<TransporterLoginScreen> {
                                 user: user,
                               )));
                     } else {
-                      Navigator.pushNamed(context, '/');
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChoiceScreen()));
                     }
                     },
                   )

@@ -5,20 +5,24 @@ import 'package:provider/provider.dart';
 import 'package:Liveasy/screens/mapScreen.dart';
 import 'package:Liveasy/screens/transporter_find_load.dart';
 import 'package:Liveasy/screens/transporter_found_loads.dart';
-import 'package:Liveasy/widgets/LoadingPointSeachScreen.dart';
 import 'widgets/providerData.dart';
 import 'package:Liveasy/screens/shipper_login_screen.dart';
 import 'package:Liveasy/screens/choice_screen.dart';
 import 'package:Liveasy/screens/transporter_login_screen.dart';
-import 'package:Liveasy/screens/shipper_new_entry.dart';
-import 'package:Liveasy/screens/cardGenerator.dart';
 import 'package:Liveasy/screens/shipper_home_Screen.dart';
 import 'package:Liveasy/screens/transporter_home_screen.dart';
+import 'package:http/http.dart' as http;
 void main() => runApp(FlashChat());
 
+Future<String> getUserDetails(String mobileNum)async{
+
+  http.Response response = await http.get("http://15.206.217.236:2000/users/$mobileNum");
+  return response.body;
+}
 class FlashChat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     return ChangeNotifierProvider<NewDataByShipper>(
       create: (context) => NewDataByShipper(),
       child: FutureBuilder(
@@ -27,25 +31,56 @@ class FlashChat extends StatelessWidget {
             if (snapshot.hasError) {
               return loading();
             }
-            if (snapshot.connectionState == ConnectionState.done) {
-              return MaterialApp(
-                initialRoute:
-                    FirebaseAuth.instance.currentUser == null ? '/' : '/home',
-                routes: {
-                  '/': (context) => ChoiceScreen(),
-                  '/login1': (context) => ShipperLoginScreen(),
-                  '/login2': (context) => TransporterLoginScreen(),
-                  '/newEntry': (context) => ShipperNewEntryScreen(),
-                  '/cards': (context) => CardScreen(),
-                  '/home': (context) => ShipperHomeScreen(
-                        user: FirebaseAuth.instance.currentUser,
-                      ),
-                  '/tsHome' : (context) => TsHomeScreen( user: FirebaseAuth.instance.currentUser,),
-                  '/findLoad' : (context) => TsFindLoadScreen(),
-                  '/maps' : (context) => MapScreen(),
-                  '/product' : (context) => LoadingPointSearchScreen(),
-                  'found_loads' : (context) => TsFoundLoadsScreen(),
-                },
+            if (snapshot.connectionState == ConnectionState.done){
+              if (FirebaseAuth.instance.currentUser == null){
+                return MaterialApp(
+                  home: ChoiceScreen(),
+
+                  routes: {
+                    '/choice': (context) => ChoiceScreen(),
+                    '/login1': (context) => ShipperLoginScreen(),
+                    '/login2': (context) => TransporterLoginScreen(),
+                    '/home': (context) => ShipperHomeScreen(
+                      user: FirebaseAuth.instance.currentUser,
+                    ),
+                    '/tsHome' : (context) => TsHomeScreen( user: FirebaseAuth.instance.currentUser,),
+                    '/findLoad' : (context) => TsFindLoadScreen(),
+                    '/maps' : (context) => MapScreen(),
+                    'found_loads' : (context) => TsFoundLoadsScreen(),
+                  },);
+              }
+              return FutureBuilder(
+                future: getUserDetails(FirebaseAuth.instance.currentUser.phoneNumber),
+                builder: (BuildContext context, AsyncSnapshot<String> snapshot){
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  final String userType  = snapshot.data;
+                  print(userType);
+                  Widget initialScreen = ChoiceScreen();
+                  if (userType == "shipper"){
+                    initialScreen =  ShipperHomeScreen(user: FirebaseAuth.instance.currentUser,);
+                  }
+                  else if(userType == "transporter"){
+                    initialScreen = TsHomeScreen( user: FirebaseAuth.instance.currentUser,);
+                  }
+                return MaterialApp(
+                  home: initialScreen,
+                  routes: {
+                    '/choice': (context) => ChoiceScreen(),
+                    '/login1': (context) => ShipperLoginScreen(),
+                    '/login2': (context) => TransporterLoginScreen(),
+                    '/home': (context) => ShipperHomeScreen(
+                          user: FirebaseAuth.instance.currentUser,
+                        ),
+                    '/tsHome' : (context) => TsHomeScreen( user: FirebaseAuth.instance.currentUser,),
+                    '/findLoad' : (context) => TsFindLoadScreen(),
+                    '/maps' : (context) => MapScreen(),
+                    'found_loads' : (context) => TsFoundLoadsScreen(),
+                  },
+                );}
               );
             }
             return loading();
