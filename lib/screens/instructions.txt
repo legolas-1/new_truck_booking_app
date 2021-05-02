@@ -1,0 +1,31 @@
+make folder structure like this
+
+// TODO: need to think over how to make login and choice screens in folder.
+// TODO: make all the class names to camelCase. 
+
+lib 
+  - main.dart
+  - helpers \
+    - apiClient.dart
+  - utils \
+    - dateUtil.dart(contains all dates format changing functions)
+  - constants \
+    - _texts.dart
+    - _colors.dart
+    - _spaces.dart
+    - _breakpoints.dart
+  - screens \
+    - index.dart ( this file will contain all the below screens and will help in export this to use in any other place)
+    - shipper \
+      - home.dart
+      - entry.dart
+    - transporter \
+      - home.dart
+      - list.dart(find and found)
+    - cards \
+      - card.dart
+    - login.dart
+    - choiceScreen.dart
+  - widgets
+  - store
+  - models

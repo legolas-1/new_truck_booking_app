@@ -27,7 +27,7 @@ class DetailCard extends StatelessWidget {
     return Container(
       child: Card(
         color: Color(0xFFF3F2F1),
-         elevation: 10,
+        elevation: 10,
         child: Container(
           margin: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
           padding: EdgeInsets.only(top: 1, bottom: 8, left: 8),
@@ -68,7 +68,7 @@ class DetailCard extends StatelessWidget {
                           ),
                         ),
                         SizedBox(
-                          width: 8 ,
+                          width: 8,
                         ),
                         Text(
                           'To $unloadingPoint',
@@ -84,7 +84,6 @@ class DetailCard extends StatelessWidget {
               SizedBox(
                 height: 8,
               ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -107,7 +106,6 @@ class DetailCard extends StatelessWidget {
                           fontSize: 18,
                         ),
                       ),
-
                       SizedBox(
                         height: 3,
                       ),
@@ -124,8 +122,10 @@ class DetailCard extends StatelessWidget {
                     width: 85,
                     alignment: Alignment.centerRight,
                     decoration: BoxDecoration(
-                        image: DecorationImage(image: AssetImage('assets/${truckPreference.toLowerCase()}.jpeg'), fit: BoxFit.cover)
-                    ),
+                        image: DecorationImage(
+                            image: AssetImage(
+                                'assets/${truckPreference.toLowerCase()}.jpeg'),
+                            fit: BoxFit.cover)),
                   ),
                 ],
               ),
@@ -136,11 +136,12 @@ class DetailCard extends StatelessWidget {
                   ? Container()
                   : Container(
                       child: Text(
-                      'Comments : $comments ',
-                      style: TextStyle(
-                        fontSize: 18,
+                        'Comments : $comments ',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
                       ),
-                    ),),
+                    ),
             ],
           ),
         ),
@@ -148,6 +149,8 @@ class DetailCard extends StatelessWidget {
     );
   }
 }
+
+//TODO: remove commented code.
 
 //
 //

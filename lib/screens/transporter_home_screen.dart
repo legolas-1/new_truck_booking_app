@@ -6,14 +6,19 @@ import 'package:location_permissions/location_permissions.dart';
 import 'package:Liveasy/screens/transporter_find_load.dart';
 import 'package:Liveasy/screens/transporter_found_loads.dart';
 import 'package:flutter/cupertino.dart';
+
 var controller1 = TextEditingController();
 var controller2 = TextEditingController();
 String loadingPoint = '';
 String unloadingPoint = '';
+//TODO: put this key into .env file!!!!
+//never ever put any secret keys in your code !!!
+//Always define them in .env file
 String apikey = 'AIzaSyCI8bvNwE05B7Cp03Rvc-QsMX9QjY-EsS4';
+
 class TsHomeScreen extends StatefulWidget {
   User user;
-  String userCity ='';
+  String userCity = '';
   TsHomeScreen({this.user, this.userCity});
   @override
   _TsHomeScreenState createState() => _TsHomeScreenState();
@@ -21,23 +26,25 @@ class TsHomeScreen extends StatefulWidget {
 
 class _TsHomeScreenState extends State<TsHomeScreen> {
   String city = '';
-  PageController _controller = PageController(initialPage: 0,);
+  PageController _controller = PageController(
+    initialPage: 0,
+  );
   void getCurrentLocation() async {
-
-    if (widget.userCity == '' || widget.userCity == null){
-
+    if (widget.userCity == '' || widget.userCity == null) {
       // PermissionStatus permission =
       //     await LocationPermissions().requestPermissions();
       PermissionStatus permission1 =
-      await LocationPermissions().checkPermissionStatus();
+          await LocationPermissions().checkPermissionStatus();
       print(permission1);
       // print(permission);
 
-      var position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      var position = await Geolocator()
+          .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       print(position);
-      final coordinates = new Coordinates(position.latitude, position.longitude);
+      final coordinates =
+          new Coordinates(position.latitude, position.longitude);
       var addresses =
-      await Geocoder.local.findAddressesFromCoordinates(coordinates);
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
       var first = addresses.first;
       print(first.addressLine);
       // http.Response tokenGet = await http.post('https://outpost.mapmyindia.com/api/security/oauth/token?grant_type=client_credentials&client_id=33OkryzDZsJmp0siGnK04TeuQrg3DWRxswnTg_VBiHew-2D1tA3oa3fthrGnx4vwbwlbF_xT2T4P9dykuS1GUNmbRb8e5CUgz-RgWDyQspeDCXkXK5Nagw==&client_secret=lrFxI-iSEg9xHXNZXiqUoprc9ZvWP_PDWBDw94qhrze0sUkn7LBDwRNFscpDTVFH7aQT4tu6ycN0492wqPs-ewpjObJ6xuR7iRufmSVcnt9fys5dp0F5jlHLxBEj7oqq');
@@ -62,9 +69,11 @@ class _TsHomeScreenState extends State<TsHomeScreen> {
       // // print(response1.body);
       // // var adressa = jsonDecode(response1.body);
       // // print(adressa);
+    } else {
+      city = widget.userCity;
     }
-    else { city = widget.userCity;}
   }
+
   var geolocator = Geolocator();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int currentPage = 0;
@@ -73,6 +82,7 @@ class _TsHomeScreenState extends State<TsHomeScreen> {
     super.initState();
     getCurrentLocation();
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -152,76 +162,119 @@ class _TsHomeScreenState extends State<TsHomeScreen> {
                     children: [
                       Row(
                         children: [
-                          SizedBox(width: 25,),
+                          SizedBox(
+                            width: 25,
+                          ),
                           Container(
                             child: GestureDetector(
-                                onTap: (){
+                                onTap: () {
                                   _scaffoldKey.currentState.openDrawer();
-                                  },
-                                child: Icon(Icons.list, size: 30,color: Colors.white,)),
+                                },
+                                child: Icon(
+                                  Icons.list,
+                                  size: 30,
+                                  color: Colors.white,
+                                )),
                           ),
-                          SizedBox(width: 20,),
+                          SizedBox(
+                            width: 20,
+                          ),
                           Container(
-                            child: Text('LiveEasy', style: TextStyle(fontSize: 23, color: Colors.white, fontWeight: FontWeight.bold),),
+                            child: Text(
+                              'LiveEasy',
+                              style: TextStyle(
+                                  fontSize: 23,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 10,),
+                      SizedBox(
+                        height: 10,
+                      ),
                       Container(
                         height: 30,
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           children: [
-                            SizedBox(width: 25,),
+                            SizedBox(
+                              width: 25,
+                            ),
                             Container(
                               padding: EdgeInsets.all(5),
                               decoration: BoxDecoration(
-                                color: currentPage == 0 ? Colors.white30: Color(0xFF525252),
+                                color: currentPage == 0
+                                    ? Colors.white30
+                                    : Color(0xFF525252),
                                 borderRadius: BorderRadius.circular(19),
                               ),
                               child: GestureDetector(
-                                onTap: (){
+                                onTap: () {
                                   _controller.jumpToPage(0);
-                                  },
-                                child: Text('HOME', style: TextStyle(fontSize: 15, color: Colors.white),),
-                            ),),
-                            SizedBox(width: 30,),
+                                },
+                                child: Text(
+                                  'HOME',
+                                  style: TextStyle(
+                                      fontSize: 15, color: Colors.white),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 30,
+                            ),
                             Container(
                               padding: EdgeInsets.all(5),
                               decoration: BoxDecoration(
-                                color: currentPage == 1 ? Colors.white30: Color(0xFF525252),
+                                color: currentPage == 1
+                                    ? Colors.white30
+                                    : Color(0xFF525252),
                                 borderRadius: BorderRadius.circular(19),
                               ),
                               child: GestureDetector(
-                                onTap: (){
+                                onTap: () {
                                   _controller.jumpToPage(1);
                                 },
-                                child: Text('FIND LOAD', style: TextStyle(fontSize: 15, color: Colors.white),),
-                            ),),
-                            SizedBox(width: 30,),
+                                child: Text(
+                                  'FIND LOAD',
+                                  style: TextStyle(
+                                      fontSize: 15, color: Colors.white),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 30,
+                            ),
                             Container(
                               padding: EdgeInsets.all(5),
                               decoration: BoxDecoration(
-                                color: currentPage == 2 ? Colors.white30: Color(0xFF525252),
+                                color: currentPage == 2
+                                    ? Colors.white30
+                                    : Color(0xFF525252),
                                 borderRadius: BorderRadius.circular(19),
                               ),
                               child: GestureDetector(
-                                onTap: (){
+                                onTap: () {
                                   _controller.jumpToPage(2);
                                 },
-                                child: Text('TRUCKS', style: TextStyle(fontSize: 15, color: Colors.white),),
-                            ),),
-                        ],
+                                child: Text(
+                                  'TRUCKS',
+                                  style: TextStyle(
+                                      fontSize: 15, color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-            ),
-              ],
-                  )
-              ),
+                    ],
+                  )),
               Expanded(
                 child: PageView(
                   onPageChanged: (val) {
-                    if(val != 1){
-                    FocusScope.of(context).unfocus();}
+                    if (val != 1) {
+                      FocusScope.of(context).unfocus();
+                    }
                     setState(() {
                       currentPage = val;
                     });
@@ -259,18 +312,21 @@ class _TsHomeScreenState extends State<TsHomeScreen> {
                             children: [
                               Expanded(
                                 child: Padding(
-                                  padding: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0 ),
+                                  padding: EdgeInsets.only(
+                                      top: 20, left: 20, right: 20, bottom: 0),
                                   child: Container(
                                     color: Color(0xFFF3F2F1),
                                     child: ListView(
                                       keyboardDismissBehavior:
-                                      ScrollViewKeyboardDismissBehavior.onDrag,
+                                          ScrollViewKeyboardDismissBehavior
+                                              .onDrag,
                                       children: [
                                         Container(
                                           height: 72,
                                           width: double.infinity,
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
                                             children: [
                                               Expanded(
                                                 child: TextFormField(
@@ -280,12 +336,14 @@ class _TsHomeScreenState extends State<TsHomeScreen> {
                                                   //   loadingPoint = value;
                                                   // },
                                                   onChanged: (newValue) {
-                                                    loadingPoint = newValue.trim();
+                                                    loadingPoint =
+                                                        newValue.trim();
                                                   },
                                                   decoration: InputDecoration(
                                                     hintText: 'Loading Point',
-                                                    hintStyle:
-                                                    TextStyle(fontSize: 20, color: Colors.grey),
+                                                    hintStyle: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.grey),
                                                   ),
                                                   // validator: (String value) {
                                                   //   if (value.trim().isEmpty) {
@@ -293,15 +351,26 @@ class _TsHomeScreenState extends State<TsHomeScreen> {
                                                   //   } else
                                                   //     return null;
                                                   // },
-                                                  style:
-                                                  TextStyle(fontSize: 20, color: Colors.black),
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.black),
                                                 ),
                                               ),
                                               Container(
-                                                child: GestureDetector(onTap:(){setState(() {
-                                                  loadingPoint = '';
-                                                  controller1 = TextEditingController(text:'');
-                                                });} ,child: Icon(Icons.clear,size: 25, color: Colors.black26,)),
+                                                child: GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        loadingPoint = '';
+                                                        controller1 =
+                                                            TextEditingController(
+                                                                text: '');
+                                                      });
+                                                    },
+                                                    child: Icon(
+                                                      Icons.clear,
+                                                      size: 25,
+                                                      color: Colors.black26,
+                                                    )),
                                               )
                                             ],
                                           ),
@@ -313,19 +382,22 @@ class _TsHomeScreenState extends State<TsHomeScreen> {
                                           height: 72,
                                           width: double.infinity,
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
                                             children: [
                                               Expanded(
                                                 child: TextFormField(
                                                   controller: controller2,
                                                   autofocus: true,
                                                   onChanged: (newValue) {
-                                                    unloadingPoint = newValue.trim();
+                                                    unloadingPoint =
+                                                        newValue.trim();
                                                   },
                                                   decoration: InputDecoration(
                                                     hintText: 'Unloading Point',
-                                                    hintStyle:
-                                                    TextStyle(fontSize: 20, color: Colors.grey),
+                                                    hintStyle: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.grey),
                                                   ),
                                                   // validator: (String value) {
                                                   //   if (value.trim().isEmpty) {
@@ -333,15 +405,26 @@ class _TsHomeScreenState extends State<TsHomeScreen> {
                                                   //   } else
                                                   //     return null;
                                                   // },
-                                                  style:
-                                                  TextStyle(fontSize: 20, color: Colors.black),
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.black),
                                                 ),
                                               ),
                                               Container(
-                                                child: GestureDetector(onTap:(){setState(() {
-                                                  unloadingPoint = '';
-                                                  controller2 = TextEditingController(text: '');
-                                                });} ,child: Icon(Icons.clear,size: 25, color: Colors.black26,)),
+                                                child: GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        unloadingPoint = '';
+                                                        controller2 =
+                                                            TextEditingController(
+                                                                text: '');
+                                                      });
+                                                    },
+                                                    child: Icon(
+                                                      Icons.clear,
+                                                      size: 25,
+                                                      color: Colors.black26,
+                                                    )),
                                               ),
                                             ],
                                           ),
@@ -356,21 +439,43 @@ class _TsHomeScreenState extends State<TsHomeScreen> {
                                               // if (!formKey.currentState.validate()) {
                                               //   return;
                                               // }
-                                              if ((loadingPoint == null || loadingPoint.trim() == '') && (unloadingPoint == null || unloadingPoint.trim() == '')){
-                                                FocusScope.of(context).unfocus();
-                                                showDialog(context: context, builder: (context)=> AlertDialogBox());
+                                              if ((loadingPoint == null ||
+                                                      loadingPoint.trim() ==
+                                                          '') &&
+                                                  (unloadingPoint == null ||
+                                                      unloadingPoint.trim() ==
+                                                          '')) {
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        AlertDialogBox());
+                                              } else {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            TsFoundLoadsScreen(
+                                                              searchedLoadingPoint:
+                                                                  loadingPoint,
+                                                              searchedUnloadingPoint:
+                                                                  unloadingPoint,
+                                                            )));
                                               }
-                                              else{
-                                                Navigator.push(context, MaterialPageRoute(builder: (context)=> TsFoundLoadsScreen(searchedLoadingPoint: loadingPoint, searchedUnloadingPoint: unloadingPoint,)));
-                                              }},
+                                            },
                                             color: Color(0xFF043979),
                                             child: Text(
                                               'Find',
-                                              style: TextStyle(fontSize: 25, color: Colors.white),
+                                              style: TextStyle(
+                                                  fontSize: 25,
+                                                  color: Colors.white),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(height: 15,),
+                                        SizedBox(
+                                          height: 15,
+                                        ),
                                       ],
                                     ),
                                   ),

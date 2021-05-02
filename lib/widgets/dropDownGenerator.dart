@@ -8,10 +8,10 @@ class DropDownGenerator extends StatefulWidget {
   String hintText = ' ';
   DropDownGenerator(
       {this.dropdownValue,
-        this.dropdownValues,
-        this.dropDownNumber,
-        this.notAllowedValue,
-        this.hintText});
+      this.dropdownValues,
+      this.dropDownNumber,
+      this.notAllowedValue,
+      this.hintText});
 
   @override
   _DropDownGeneratorState createState() => _DropDownGeneratorState();
@@ -40,7 +40,7 @@ class _DropDownGeneratorState extends State<DropDownGenerator> {
       //   });
       // },
       items:
-      widget.dropdownValues.map<DropdownMenuItem<String>>((String value) {
+          widget.dropdownValues.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
@@ -50,7 +50,7 @@ class _DropDownGeneratorState extends State<DropDownGenerator> {
   }
 }
 
-
+//TODO: move this to new file DatePicker
 class DatePickerGenerator extends StatelessWidget {
   final String date;
   DatePickerGenerator({this.date});
@@ -69,5 +69,3 @@ class DatePickerGenerator extends StatelessWidget {
     );
   }
 }
-
-

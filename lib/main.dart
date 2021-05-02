@@ -14,6 +14,7 @@ import 'package:Liveasy/screens/shipper_new_entry.dart';
 import 'package:Liveasy/screens/cardGenerator.dart';
 import 'package:Liveasy/screens/shipper_home_Screen.dart';
 import 'package:Liveasy/screens/transporter_home_screen.dart';
+
 void main() => runApp(FlashChat());
 
 class FlashChat extends StatelessWidget {
@@ -30,6 +31,9 @@ class FlashChat extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.done) {
               return MaterialApp(
                 initialRoute:
+                    // TODO: after auth of user, save this FirebaseAuth.instance.currentUser key as "isLoggedIn" in global store of the app.
+                    // Then in below line instend of using FirebaseAuth.instance.currentUser check we can directly use isLoggedIn check.
+                    // Also if then user will log out we will just set isLoggedIn check to false. unless he logins in again .
                     FirebaseAuth.instance.currentUser == null ? '/' : '/home',
                 routes: {
                   '/': (context) => ChoiceScreen(),
@@ -40,11 +44,13 @@ class FlashChat extends StatelessWidget {
                   '/home': (context) => ShipperHomeScreen(
                         user: FirebaseAuth.instance.currentUser,
                       ),
-                  '/tsHome' : (context) => TsHomeScreen( user: FirebaseAuth.instance.currentUser,),
-                  '/findLoad' : (context) => TsFindLoadScreen(),
-                  '/maps' : (context) => MapScreen(),
-                  '/product' : (context) => LoadingPointSearchScreen(),
-                  'found_loads' : (context) => TsFoundLoadsScreen(),
+                  '/tsHome': (context) => TsHomeScreen(
+                        user: FirebaseAuth.instance.currentUser,
+                      ),
+                  '/findLoad': (context) => TsFindLoadScreen(),
+                  '/maps': (context) => MapScreen(),
+                  '/product': (context) => LoadingPointSearchScreen(),
+                  'found_loads': (context) => TsFoundLoadsScreen(),
                 },
               );
             }

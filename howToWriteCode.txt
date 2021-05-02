@@ -1,0 +1,13 @@
+1. Variable names - make them as descriptive as possbile like : isUserAuthorized()
+  a. Class - camelCase - make them short a little. mostly they define real world quantities. like truck(this will consist it's properties and methods) 
+  b. variable - camelCase 
+    b.1 - is - like: isLoggedIn
+    b.2 - can - like: canSubmit
+    b.3 - check - like: checkTurnedOn
+    b.4 - set - like: setColor
+  c. function - camelCase
+
+2. Enviornment variables
+  a. Put those variables here which will change on different enviornments(prod, dev, staging)
+  b. example: API keys, End Point url, DB url, 
+  c. Files could be of one or three type like: .evn or .env.prod, .env.dev, .env.stage

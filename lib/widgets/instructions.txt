@@ -1,0 +1,14 @@
+1. why files named screens are in this folder ?? Decide where they fit better and then put them in 
+screens or widgets.
+
+widgets will contains like a small block of UI which will be repeated on many screens
+,like a card, or button, textInputField etc.
+
+screens will contains screens whole screens, which will be shown on change of route 
+and whole screen will appear. and remember only one screen should be displayed at a time.
+
+model will contains blueprint of data we are getting. and field we are going to use with truck
+will be defined in a model class.
+
+
+Keeping above points in mind, divide your code in screens and widgets.

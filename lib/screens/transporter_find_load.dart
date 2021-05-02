@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:Liveasy/screens/transporter_found_loads.dart';
+
 var controller1 = TextEditingController();
 var controller2 = TextEditingController();
 String loadingPoint = '';
 String unloadingPoint = '';
+//TODO: put this key into .env file!!!!
+//never ever put any secret keys in your code !!!
+//Always define them in .env file
 String apikey = 'AIzaSyCI8bvNwE05B7Cp03Rvc-QsMX9QjY-EsS4';
+
 class TsFindLoadScreen extends StatefulWidget {
   @override
   _TsFindLoadScreenState createState() => _TsFindLoadScreenState();
@@ -18,7 +23,9 @@ class _TsFindLoadScreenState extends State<TsFindLoadScreen> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: GestureDetector(
-        onTap: (){FocusScope.of(context).unfocus();},
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
         child: Scaffold(
           backgroundColor: Color(0xFFF3F2F1),
           appBar: AppBar(
@@ -47,7 +54,8 @@ class _TsFindLoadScreenState extends State<TsFindLoadScreen> {
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0 ),
+                      padding: EdgeInsets.only(
+                          top: 20, left: 20, right: 20, bottom: 0),
                       child: Container(
                         color: Color(0xFFF3F2F1),
                         child: ListView(
@@ -58,7 +66,8 @@ class _TsFindLoadScreenState extends State<TsFindLoadScreen> {
                               height: 72,
                               width: double.infinity,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Expanded(
                                     child: TextFormField(
@@ -72,8 +81,8 @@ class _TsFindLoadScreenState extends State<TsFindLoadScreen> {
                                       },
                                       decoration: InputDecoration(
                                         hintText: 'Loading Point',
-                                        hintStyle:
-                                            TextStyle(fontSize: 20, color: Colors.grey),
+                                        hintStyle: TextStyle(
+                                            fontSize: 20, color: Colors.grey),
                                       ),
                                       // validator: (String value) {
                                       //   if (value.trim().isEmpty) {
@@ -81,15 +90,24 @@ class _TsFindLoadScreenState extends State<TsFindLoadScreen> {
                                       //   } else
                                       //     return null;
                                       // },
-                                      style:
-                                          TextStyle(fontSize: 20, color: Colors.black),
+                                      style: TextStyle(
+                                          fontSize: 20, color: Colors.black),
                                     ),
                                   ),
                                   Container(
-                                    child: GestureDetector(onTap:(){setState(() {
-                                      loadingPoint = '';
-                                      controller1 = TextEditingController(text:'');
-                                    });} ,child: Icon(Icons.clear,size: 25, color: Colors.black26,)),
+                                    child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            loadingPoint = '';
+                                            controller1 =
+                                                TextEditingController(text: '');
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.clear,
+                                          size: 25,
+                                          color: Colors.black26,
+                                        )),
                                   )
                                 ],
                               ),
@@ -101,7 +119,8 @@ class _TsFindLoadScreenState extends State<TsFindLoadScreen> {
                               height: 72,
                               width: double.infinity,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Expanded(
                                     child: TextFormField(
@@ -112,8 +131,8 @@ class _TsFindLoadScreenState extends State<TsFindLoadScreen> {
                                       },
                                       decoration: InputDecoration(
                                         hintText: 'Unloading Point',
-                                        hintStyle:
-                                            TextStyle(fontSize: 20, color: Colors.grey),
+                                        hintStyle: TextStyle(
+                                            fontSize: 20, color: Colors.grey),
                                       ),
                                       // validator: (String value) {
                                       //   if (value.trim().isEmpty) {
@@ -121,15 +140,24 @@ class _TsFindLoadScreenState extends State<TsFindLoadScreen> {
                                       //   } else
                                       //     return null;
                                       // },
-                                      style:
-                                          TextStyle(fontSize: 20, color: Colors.black),
+                                      style: TextStyle(
+                                          fontSize: 20, color: Colors.black),
                                     ),
                                   ),
                                   Container(
-                                    child: GestureDetector(onTap:(){setState(() {
-                                      unloadingPoint = '';
-                                      controller2 = TextEditingController(text: '');
-                                    });} ,child: Icon(Icons.clear,size: 25, color: Colors.black26,)),
+                                    child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            unloadingPoint = '';
+                                            controller2 =
+                                                TextEditingController(text: '');
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.clear,
+                                          size: 25,
+                                          color: Colors.black26,
+                                        )),
                                   ),
                                 ],
                               ),
@@ -144,21 +172,38 @@ class _TsFindLoadScreenState extends State<TsFindLoadScreen> {
                                   // if (!formKey.currentState.validate()) {
                                   //   return;
                                   // }
-                                  if ((loadingPoint == null || loadingPoint.trim() == '') && (unloadingPoint == null || unloadingPoint.trim() == '')){
+                                  if ((loadingPoint == null ||
+                                          loadingPoint.trim() == '') &&
+                                      (unloadingPoint == null ||
+                                          unloadingPoint.trim() == '')) {
                                     FocusScope.of(context).unfocus();
-                                    showDialog(context: context, builder: (context)=> AlertDialogBox());
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialogBox());
+                                  } else {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                TsFoundLoadsScreen(
+                                                  searchedLoadingPoint:
+                                                      loadingPoint,
+                                                  searchedUnloadingPoint:
+                                                      unloadingPoint,
+                                                )));
                                   }
-                                  else{
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> TsFoundLoadsScreen(searchedLoadingPoint: loadingPoint, searchedUnloadingPoint: unloadingPoint,)));
-                                }},
+                                },
                                 color: Color(0xFF043979),
                                 child: Text(
                                   'Find',
-                                  style: TextStyle(fontSize: 25, color: Colors.white),
+                                  style: TextStyle(
+                                      fontSize: 25, color: Colors.white),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 15,),
+                            SizedBox(
+                              height: 15,
+                            ),
                           ],
                         ),
                       ),
@@ -183,19 +228,37 @@ class AlertDialogBox extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Loading Point And Unloading Point', style: TextStyle(fontSize: 15, color: Colors.black54),),
-            Text('Both Cannot Be Empty', style: TextStyle(fontSize: 15, color: Colors.black54),),
-            Text('Please Enter Atleast One', style: TextStyle(fontSize: 15, color: Colors.black54),),
+            Text(
+              'Loading Point And Unloading Point',
+              style: TextStyle(fontSize: 15, color: Colors.black54),
+            ),
+            Text(
+              'Both Cannot Be Empty',
+              style: TextStyle(fontSize: 15, color: Colors.black54),
+            ),
+            Text(
+              'Please Enter Atleast One',
+              style: TextStyle(fontSize: 15, color: Colors.black54),
+            ),
           ],
         ),
       ),
       actions: [
         TextButton(
-          onPressed: (){Navigator.pop(context);},
+          onPressed: () {
+            Navigator.pop(context);
+          },
           child: Container(
-          padding: EdgeInsets.all(5),
+            padding: EdgeInsets.all(5),
             color: Color(0xFF043979),
-            child: Center(child: Text('ReEnter', style: TextStyle(fontSize: 20, color: Colors.white),),),),),
+            child: Center(
+              child: Text(
+                'ReEnter',
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }

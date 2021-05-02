@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
+// TODO: this code is good but you need to make this into a model folder.
+
 class NewDataByShipper extends ChangeNotifier {
   String loadingPoint;
   String unloadingPoint;
@@ -17,6 +19,7 @@ class NewDataByShipper extends ChangeNotifier {
     print(newValue);
     notifyListeners();
   }
+
   void updateLoadingPoint({String newValue}) {
     loadingPoint = newValue;
     print(loadingPoint);
@@ -40,27 +43,32 @@ class NewDataByShipper extends ChangeNotifier {
     print(truckPreference);
     notifyListeners();
   }
+
   void updateNoOfTrucks({String newValue}) {
     noOfTrucks = newValue;
     print(noOfTrucks);
     notifyListeners();
   }
+
   void updateWeight({String newValue}) {
     weight = newValue;
     print(weight);
     notifyListeners();
   }
+
   void updateComments({String newValue}) {
     comments = newValue;
     print(comments);
     notifyListeners();
   }
+
   void updateIsCommentsEmpty({bool newValue}) {
     isCommentsEmpty = newValue;
     print(isCommentsEmpty);
     notifyListeners();
   }
-  void clearAll(){
+
+  void clearAll() {
     loadingPoint = null;
     unloadingPoint = null;
     productType = null;
@@ -72,5 +80,4 @@ class NewDataByShipper extends ChangeNotifier {
     isCommentsEmpty = true;
     notifyListeners();
   }
-
 }
